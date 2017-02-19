@@ -42,5 +42,32 @@ impl List {
 
 mod test {
     #[test]
-    fn basics() {}
+    fn basics() {
+        let mut list = List::new();
+
+        // check empty list behaves right
+        assert_eq!(list.pop(), None);
+
+        // push it real good
+        list.push(1);
+        list.push(2);
+        list.push(3);
+
+        // check normal removal
+        assert_eq!(list.pop(), 3);
+        assert_eq!(list.pop(), 2);
+
+        // push it real gooder
+        list.push(4);
+        list.push(5);
+
+        // normal removal
+        assert_eq!(list.pop(), 5);
+        assert_eq!(list.pop(), 4);
+        assert_eq!(list.pop(), 1);
+
+        // exhausted removal
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.pop(), None);
+    }
 }
