@@ -40,7 +40,10 @@ impl List {
     }
 }
 
+#[cfg(test)]
 mod test {
+    use super::List;
+
     #[test]
     fn basics() {
         let mut list = List::new();
@@ -54,17 +57,17 @@ mod test {
         list.push(3);
 
         // check normal removal
-        assert_eq!(list.pop(), 3);
-        assert_eq!(list.pop(), 2);
+        assert_eq!(list.pop(), Some(3));
+        assert_eq!(list.pop(), Some(2));
 
         // push it real gooder
         list.push(4);
         list.push(5);
 
         // normal removal
-        assert_eq!(list.pop(), 5);
-        assert_eq!(list.pop(), 4);
-        assert_eq!(list.pop(), 1);
+        assert_eq!(list.pop(), Some(5));
+        assert_eq!(list.pop(), Some(4));
+        assert_eq!(list.pop(), Some(1));
 
         // exhausted removal
         assert_eq!(list.pop(), None);
