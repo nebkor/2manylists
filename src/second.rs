@@ -1,5 +1,3 @@
-use std::mem;
-
 type Link = Option<Box<Node>>;
 
 pub struct List {
@@ -19,14 +17,14 @@ impl List {
     pub fn push(&mut self, elem: i32) {
         let new_node = Box::new(Node {
             elem: elem,
-            next: mem::replace(&mut self.head, None),
+            next: self.head.take(),
         });
 
         self.head = Some(new_node);
     }
 
     pub fn pop(&mut self) -> Option<i32> {
-        match mem::replace(&mut self.head, None) {
+        match self.head.take() {
             None => None,
             Some(node) => {
                 let node = *node;
@@ -39,12 +37,12 @@ impl List {
 
 impl Drop for List {
     fn drop(&mut self) {
-        let mut cur_link = mem::replace(&mut self.head, None);
+        let mut cur_link = self.head.take();
 
         // `while let` means "do this thing until this pattern doesn't match".
         // `boxed_node` is a pattern variable here.
         while let Some(mut boxed_node) = cur_link {
-            cur_link = mem::replace(&mut boxed_node.next, None);
+            cur_link = boxed_node.next.take();
             // boxed_node goes out of scope and gets dropped here,
             // but it's Node's `next` field has been set to Link::Empty
             // and cur_link is assigned the value of what `next` had previously
