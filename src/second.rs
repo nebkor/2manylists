@@ -4,6 +4,10 @@ pub struct Iter<'a, T: 'a> {
     next: Option<&'a Node<T>>,
 }
 
+pub struct IterMute<'a, T: 'a> {
+    next: Option<&'a mut Node<T>>,
+}
+
 type Link<T> = Option<Box<Node<T>>>;
 
 pub struct List<T> {

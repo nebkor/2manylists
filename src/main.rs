@@ -25,7 +25,7 @@ fn main() {
 
         let iter = list.iter();
         let mapped = iter.map(|&x| {
-            return Some(x);
+            return x;
         });
 
         let output = mapped.collect::<Vec<_>>();
