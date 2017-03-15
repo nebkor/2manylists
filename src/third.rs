@@ -1,6 +1,6 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
-type Link<T> = Option<Rc<Node<T>>>;
+type Link<T> = Option<Arc<Node<T>>>;
 
 pub struct List<T> {
     head: Link<T>,
@@ -22,7 +22,7 @@ impl<T> List<T> {
 
     pub fn append(&self, elem: T) -> List<T> {
         List {
-            head: Some(Rc::new(Node {
+            head: Some(Arc::new(Node {
                 elem: elem,
                 next: self.head.clone(), /* the Option that is head gets derefed
                                           * automatically by '.', and clone() is
@@ -57,13 +57,15 @@ impl<'a, T> Iterator for Iter<'a, T> {
 
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
-        let mut head = self.head.take();
-        while let Some(node) = head {
-            if let Ok(mut head) = Rc::try_unwrap(node) {
-                head = node.next.take();
-            } else {
-                break;
-            }
+        // Steal the list's head
+        let mut cur_list = self.head.take();
+        while let Some(node) = cur_list {
+            // Clone the current node's next node.
+            cur_list = node.next.clone();
+            // Node dropped here. If the old node had
+            // refcount 1, then it will be dropped and freed, but it won't
+            // be able to fully recurse and drop its child, because we
+            // hold another Rc to it.
         }
     }
 }
