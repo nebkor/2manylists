@@ -1,18 +1,18 @@
 use std::rc::Rc;
 
+type Link<T> = Option<Rc<Node<T>>>;
+
 pub struct List<T> {
     head: Link<T>,
 }
 
-pub struct Iter<'a, T: 'a> {
-    next: Option<&'a Node<T>>,
-}
-
-type Link<T> = Option<Rc<Node<T>>>;
-
 struct Node<T> {
     elem: T,
     next: Link<T>,
+}
+
+pub struct Iter<'a, T: 'a> {
+    next: Option<&'a Node<T>>,
 }
 
 impl<T> List<T> {
