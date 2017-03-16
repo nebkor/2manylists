@@ -38,8 +38,8 @@ impl<T> List<T> {
         match self.head.take() {
             Some(old_head) => {
                 // non-empty list, need to connect the old head
-                old_head.prev = Some(new_head.clone()); // +1 new_head
-                new_head.next = Some(old_head); // +1 old_head
+                old_head.borrow_mut().prev = Some(new_head.clone()); // +1 new_head
+                new_head.borrow_mut().next = Some(old_head); // +1 old_head
                 self.head = Some(new_head); // +1 new_head, -1 old_head
             }
             None => {
