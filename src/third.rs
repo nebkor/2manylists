@@ -57,18 +57,17 @@ impl<'a, T> Iterator for Iter<'a, T> {
 
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
-        // Steal the list's head
-        let mut cur_list = self.head.take();
-        while let Some(node) = cur_list {
-            // Clone the current node's next node.
-            cur_list = node.next.clone();
-            // Node dropped here. If the old node had
-            // refcount 1, then it will be dropped and freed, but it won't
-            // be able to fully recurse and drop its child, because we
-            // hold another Rc to it.
+        let mut head = self.head.take();
+        while let Some(node) = head {
+            if let Ok(mut node) = Arc::try_unwrap(node) {
+                head = node.next.take();
+            } else {
+                break;
+            }
         }
     }
 }
+
 
 #[cfg(test)]
 mod test {
